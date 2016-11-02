@@ -1,0 +1,38 @@
+{
+  "name": "gulp-json-config",
+  "version": "0.0.1",
+  "description": "A plugin for Gulp to combine several JSON config files using a custom function",
+  "keywords": [
+    "gulpplugin",
+    "json",
+    "config",
+    "combine"
+  ],
+  "homepage": "https://github.com/meeroslav/gulp-json-config",
+  "bugs": "https://github.com/meeroslav/gulp-json-config/issues",
+  "author": {
+    "name": "Miroslav Jonas",
+    "email": "meeroslav@yahoo.com"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/meeroslav/gulp-json-config.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec src/**/*.spec.js"
+  },
+  "dependencies": {
+    "through2": "^2.0.1",
+    "gulp-util": "^3.0.0",
+    "event-stream": "^3.1.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.0.1",
+    "should": "^4.0.4"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "license": "MIT"
+}

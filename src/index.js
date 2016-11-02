@@ -1,14 +1,11 @@
-var argv = require('yargs').argv;
 var through = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var File = gutil.File;
 var path = require('path');
 
-var PLUGIN_NAME = 'combine-configs';
+var PLUGIN_NAME = 'json-config';
 
-// Based on gulp-jsoncombine plugin
-// https://github.com/reflog/gulp-jsoncombine/
 module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
     if (!fileName) {
         throw new PluginError(PLUGIN_NAME, 'Missing fileName');
