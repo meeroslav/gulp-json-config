@@ -15,6 +15,12 @@ module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
     var data = {};
     var skipConversion = false;
 
+    /**
+     * Insert property on correct location
+     * @param parent
+     * @param env
+     * @param destination
+     */
     function insertProperty(parent, env, destination) {
         if (parent && parent[env]) {
             Object.keys(parent[env]).forEach(function(prop){
@@ -24,11 +30,20 @@ module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
         }
     }
 
-    function parseJsonConfig(data, environmentOrder) {
+    /**
+     * Combine json data based on environment order
+     * @param data
+     * @param environmentOrder
+     */
+    function combineJSONData(data, environmentOrder) {
         var result = {};
 
         // iterate through all configFiles
         Object.keys(data).forEach(function (configName) {
+            if (!environmentOrder) {
+                result[configName] = data[configName];
+                return;
+            }
             if (configName.indexOf('.local') !== -1) {
                 return; // skip local ones in here, we'll handle them later
             }
@@ -44,10 +59,23 @@ module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
         return new Buffer(JSON.stringify(result));
     }
 
+    /**
+     * Get name based on environment
+     * @param name
+     * @param environment
+     * @returns {string|XML|void}
+     */
     function composeNewName(name, environment) {
         return name.replace('.json', '.' + environment + '.json');
     }
 
+    /**
+     * Starting point
+     * @param target
+     * @param encoding
+     * @param cb
+     * @returns {*}
+     */
     function handleStream(target, encoding, cb) {
         if (!firstFile) {
             firstFile = target;
@@ -70,24 +98,37 @@ module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
         }
     }
 
+    /**
+     * Close stream
+     * @param cb
+     * @returns {*}
+     */
     function endStream(cb) {
         if (firstFile && !skipConversion) {
             var cwd = firstFile.cwd;
             var base = firstFile.base;
-            try {
-                Object.keys(ENVIRONMENT_DEFINITION).forEach(function(environmentOrder){
+
+            if (ENVIRONMENT_DEFINITION) {
+                Object.keys(ENVIRONMENT_DEFINITION).forEach(function (environmentOrder) {
                     var newFile = new File({
                         cwd: cwd,
                         base: base,
                         path: path.join(base, composeNewName(fileName, environmentOrder)),
-                        contents: parseJsonConfig(data, environmentOrder)
+                        contents: combineJSONData(data, environmentOrder)
                     });
                     this.push(newFile);
                 }, this);
-                return cb();
-            } catch (ex) {
-                return cb(new PluginError(PLUGIN_NAME, ex, { showStack: true }));
+            } else {
+                var newFile = new File({
+                    cwd: cwd,
+                    base: base,
+                    path: path.join(base, fileName),
+                    contents: combineJSONData(data)
+                });
+                this.push(newFile);
             }
+            return cb();
+
         }
         cb();
     }
