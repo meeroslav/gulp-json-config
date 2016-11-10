@@ -93,7 +93,7 @@ In this file it means that for `dev` file it will take all keys from `dev` and m
     "shared": "value2"
   }, 
   "prod": {
-    "shared": "value3"
+    "shared": "value3",
     "onlyInProd": "value4"
   }
 }
@@ -107,7 +107,7 @@ In this file it means that for `dev` file it will take all keys from `dev` and m
     "shared": "valueB"
   }, 
   "prod": {
-    "shared": "valueC"
+    "shared": "valueC",
     "onlyInProd": "valueD"
   }
 }
@@ -175,7 +175,7 @@ Will result in following config:
   "my-config": {
     "user": {
       "firstname": "Jane",
-      "middle": "Marry"
+      "middle": "Marry",
       "lastname": "Doe"
     }  
   }
