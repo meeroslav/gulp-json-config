@@ -1,6 +1,6 @@
 {
   "name": "gulp-json-config",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A plugin for Gulp to combine several JSON config files using a custom function",
   "keywords": [
     "gulpplugin",

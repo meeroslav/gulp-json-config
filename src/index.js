@@ -138,10 +138,9 @@ module.exports = function(fileName, ENVIRONMENT_DEFINITION) {
          */
 
         if (!fileName) {
-            throw new PluginError(PLUGIN_NAME, 'Missing fileName');
-        } else {
-            return new Buffer(JSON.stringify(result));
+            fileName = 'config.json';
         }
+        return new Buffer(JSON.stringify(result));
     }
 
     return through.obj(handleStream, endStream);
