@@ -1,0 +1,9 @@
+{
+  "prod": {
+    "name": "John",
+    "lastname": "Doe"
+  },
+  "dev": {
+    "name": "Jane"
+  }
+}

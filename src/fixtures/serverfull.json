@@ -1,0 +1,8 @@
+{
+  "prod": {
+    "url": "http://someurl.com"
+  },
+  "dev": {
+    "url": "https://dev.com"
+  }
+}

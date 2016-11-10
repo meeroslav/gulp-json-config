@@ -36,6 +36,25 @@ describe('gulp-json-config', function() {
 
     streamShouldContain(stream, ['twofiles.json'], done);
   });
+
+  it('should save two vesions of single file when environment definition provided', function(done) {
+    var stream = src(['userfull.json'], {read: true})
+      .pipe(jsonConfig('single.json', {
+        "prod": ["prod"],
+        "dev": ["dev", "prod"]
+      }));
+
+    streamShouldContain(stream, ['single.dev.json', 'single.prod.json'], done);
+  });
+  it('should save two vesions of combined file when environment definition provided', function(done) {
+    var stream = src(['userfull.json', 'serverfull.json'], {read: true})
+      .pipe(jsonConfig('twofiles.json', {
+        "prod": ["prod"],
+        "dev": ["dev", "prod"]
+      }));
+
+    streamShouldContain(stream, ['twofiles.dev.json', 'twofiles.prod.json'], done);
+  });
 });
 
 // helpers
@@ -73,7 +92,6 @@ function streamShouldContain(stream, files, done, errRegexp) {
   var received = 0;
 
   stream.on('error', function (err) {
-    console.log(err);
     err.message.should.match(errRegexp);
     done();
   });

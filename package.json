@@ -20,7 +20,8 @@
     "url": "git://github.com/meeroslav/gulp-json-config.git"
   },
   "scripts": {
-    "test": "mocha -R spec src/**/*.spec.js"
+    "test": "mocha -R spec src/**/*.spec.js",
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --ui bdd -R spec src/**/*.spec.js -t 5000"
   },
   "dependencies": {
     "through2": "^2.0.1",
@@ -28,6 +29,7 @@
     "event-stream": "^3.1.0"
   },
   "devDependencies": {
+    "istanbul": "^0.4.5",
     "mocha": "~2.0.1",
     "should": "^4.0.4"
   },

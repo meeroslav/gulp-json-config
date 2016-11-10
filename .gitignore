@@ -8,3 +8,4 @@ npm-debug.log
 Desktop.ini
 Thumbs.db
 .gitignore
+coverage/
