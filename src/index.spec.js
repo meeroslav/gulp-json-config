@@ -25,33 +25,33 @@ describe('gulp-json-config', function() {
 
   it('should save single file', function(done) {
     var stream = src(['user.json'], {read: true})
-      .pipe(jsonConfig('single.json'));
+      .pipe(jsonConfig({fileName: 'single.json'}));
 
     streamShouldContain(stream, ['single.json'], done);
   });
 
   it('should combine two files', function(done) {
     var stream = src(['user.json', 'server.json'], {read: true})
-      .pipe(jsonConfig('twofiles.json'));
+      .pipe(jsonConfig({fileName: 'twofiles.json'}));
 
     streamShouldContain(stream, ['twofiles.json'], done);
   });
 
   it('should save two vesions of single file when environment definition provided', function(done) {
     var stream = src(['userfull.json'], {read: true})
-      .pipe(jsonConfig('single.json', {
+      .pipe(jsonConfig({fileName: 'single.json', rules: {
         "prod": ["prod"],
         "dev": ["dev", "prod"]
-      }));
+      }}));
 
     streamShouldContain(stream, ['single.dev.json', 'single.prod.json'], done);
   });
   it('should save two vesions of combined file when environment definition provided', function(done) {
     var stream = src(['userfull.json', 'serverfull.json'], {read: true})
-      .pipe(jsonConfig('twofiles.json', {
+      .pipe(jsonConfig({fileName: 'twofiles.json', rules: {
         "prod": ["prod"],
         "dev": ["dev", "prod"]
-      }));
+      }}));
 
     streamShouldContain(stream, ['twofiles.dev.json', 'twofiles.prod.json'], done);
   });

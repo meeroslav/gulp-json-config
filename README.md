@@ -5,12 +5,12 @@
 [![Dependency Status][depstat-image]][depstat-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
 
-> A plugin for Gulp to combine several JSON config files 
-> into several combined files based on rule-set
+> A plugin for Gulp to combine JSON config files into combined files based on rule-set and modification function
 
 **Gulp-json-config** parses JSON files, combines them into single file or when rule set provided into several combined files based on rules. See [Basic usage](#basic-usage) and [Advanced usage](#advanced-usage) below.
 
 **Note:** NodeJs v4 or above and Gulp are required.
+**Warning:** Version v2.x.x is not backwards compatible with version 1.0.1.
 
 ## Installation
 
@@ -31,7 +31,7 @@ var jsonConfig = require('gulp-json-config');
 
 gulp.task('index', function () {
   return gulp.src(['path/to/*.json'])
-           .pipe(jsonConfig('configName.json'))
+           .pipe(jsonConfig())
            .pipe(gulp.dest('dest/path'));
 });
 ```
@@ -50,7 +50,7 @@ gulp.task('index', function () {
 }
 ```
 
-Will result in **configName.json**:
+Will result in **config.json**:
 ```json
 {
   "inputA": { 
@@ -74,9 +74,18 @@ var jsonConfig = require('gulp-json-config');
 
 gulp.task('index', function () {
   return gulp.src(['path/to/*.json'])
-           .pipe(jsonConfig('configName.json', {
-             "prod": ["prod"],
-             "dev": ["dev", "prod"]
+           .pipe(jsonConfig({
+             fileName: 'configName.json',
+             modify: function(jsonObj) {
+               Object.keys(jsonObj).forEach(function(key) {
+                 jsonObj[key + '_env'] = jsonObj[key];
+                 delete jsonObj[key];
+               });
+             },
+             rules: {
+                "prod_env": ["prod_env"],
+                "dev_env": ["dev_env", "prod_env"]
+             }
            }))
            .pipe(gulp.dest('dest/path'));
 });
@@ -114,7 +123,7 @@ In this file it means that for `dev` file it will take all keys from `dev` and m
 ```
 
 Will result in two files:
-**configName.prod.json**
+**configName.prod_env.json**
 ```json
 {
   "inputA": { 
@@ -127,7 +136,7 @@ Will result in two files:
   }
 }
 ```
-**configName.dev.json**
+**configName.dev_env.json**
 ```json
 {
   "inputA": { 
@@ -186,19 +195,20 @@ Normally, `*.local.json` is easy to be added to `.gitignore` so your local exper
  
 ## API
  
-gulp-inject-partial(fileName, ruleSet)
+gulp-inject-partial(options)
  
-### fileName
+### options.fileName
 Type: `String`
 Param: `optional`
 Default: `config.json`
-Example: `my-config.json`
-
+Example: 
+```
+my-config.json
+```
 Filename of resulting config file
 
 
-###
-### ruleSet
+### options.rules
 Type: `[key: string]: string[]`
 Param: `optional`
 Default: `null`
@@ -213,6 +223,22 @@ Example:
 
 Rule dictionary for parsing and combining between different rule groups. 
 
+### options.modify
+Type: `(json: Object): Object`
+Param: `optional`
+Default: `function(json) { return json; }`
+Example: 
+```js
+function(jsonObj) {
+   Object.keys(jsonObj).forEach(function(key) {
+     jsonObj[key + '_env'] = jsonObj[key];
+     delete jsonObj[key];
+   });
+}
+```
+
+Custom function to modify file contents (parsed JSON objects) before merging them together.
+
 ## License
 
 [MIT](http://en.wikipedia.org/wiki/MIT_License) © [Miroslav Jonas](mailto:meeroslav@yahoo.com)
@@ -224,7 +250,7 @@ Rule dictionary for parsing and combining between different rule groups.
 [travis-image]: https://travis-ci.org/meeroslav/gulp-json-config.svg?branch=master
 
 [depstat-url]: https://david-dm.org/meeroslav/gulp-json-config
-[depstat-image]: https://david-dm.org/meeroslav/gulp-json-config.png
+[depstat-image]: https://david-dm.org/meeroslav/gulp-json-config/status.svg
 
 [codeclimate-url]: https://codeclimate.com/github/meeroslav/gulp-json-config
 [codeclimate-image]: https://codeclimate.com/github/meeroslav/gulp-json-config/badges/gpa.svg

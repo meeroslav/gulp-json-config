@@ -1,7 +1,7 @@
 {
   "name": "gulp-json-config",
-  "version": "1.0.1",
-  "description": "A plugin for Gulp to combine several JSON config files into several combined files based on rule-set",
+  "version": "2.0.0",
+  "description": "A plugin for Gulp to combine JSON config files into combined files based on rule-set and modification function",
   "keywords": [
     "gulpplugin",
     "json",
