@@ -1,44 +1,30 @@
 'use strict';
 
-var fs = require('fs');
-var gutil = require('gulp-util');
-var jsonConfig = require('../.');
-var es = require('event-stream');
-var should = require('should');
-var path = require('path');
+const fs = require('fs');
+const jsonConfig = require('../.');
+const es = require('event-stream');
+const should = require('should');
+const Vinyl = require('vinyl');
+const path = require('path');
 
 describe('gulp-json-config', function() {
-  var log;
-  var logOutput = [];
-
-  beforeEach(function () {
-    log = gutil.log;
-    logOutput = [];
-    gutil.log = function () {
-      logOutput.push(arguments);
-    };
-  });
-
-  afterEach(function () {
-    gutil.log = log;
-  });
 
   it('should save single file', function(done) {
-    var stream = src(['user.json'], {read: true})
+    const stream = src(['user.json'], {read: true})
       .pipe(jsonConfig({fileName: 'single.json'}));
 
     streamShouldContain(stream, ['single.json'], done);
   });
 
   it('should combine two files', function(done) {
-    var stream = src(['user.json', 'server.json'], {read: true})
+    const stream = src(['user.json', 'server.json'], {read: true})
       .pipe(jsonConfig({fileName: 'twofiles.json'}));
 
     streamShouldContain(stream, ['twofiles.json'], done);
   });
 
   it('should save two vesions of single file when environment definition provided', function(done) {
-    var stream = src(['userfull.json'], {read: true})
+    const stream = src(['userfull.json'], {read: true})
       .pipe(jsonConfig({fileName: 'single.json', rules: {
         "prod": ["prod"],
         "dev": ["dev", "prod"]
@@ -47,7 +33,7 @@ describe('gulp-json-config', function() {
     streamShouldContain(stream, ['single.dev.json', 'single.prod.json'], done);
   });
   it('should save two vesions of combined file when environment definition provided', function(done) {
-    var stream = src(['userfull.json', 'serverfull.json'], {read: true})
+    const stream = src(['userfull.json', 'serverfull.json'], {read: true})
       .pipe(jsonConfig({fileName: 'twofiles.json', rules: {
         "prod": ["prod"],
         "dev": ["dev", "prod"]
@@ -60,7 +46,7 @@ describe('gulp-json-config', function() {
 // helpers
 function src(files, opt) {
   opt = opt || {};
-  var stream = es.readArray(files.map(function (file) {
+  const stream = es.readArray(files.map(function (file) {
     return fixture(file, opt.read);
   }));
   return stream;
@@ -68,35 +54,35 @@ function src(files, opt) {
 
 // get fixture
 function fixture(file, read) {
-  var filepath = path.resolve(__dirname, 'fixtures', file);
-  return new gutil.File({
-    path: filepath,
+  const filePath = path.resolve(__dirname, 'fixtures', file);
+  return new Vinyl({
+    path: filePath,
     cwd: __dirname,
     base: path.resolve(__dirname, 'fixtures', path.dirname(file)),
-    contents: read ? fs.readFileSync(filepath) : null
+    contents: read ? fs.readFileSync(filePath) : null
   });
 }
 
 // get expected file
 function expectedFile(file) {
-  var filepath = path.resolve(__dirname, 'expected', file);
-  return new gutil.File({
-    path: filepath,
+  const filePath = path.resolve(__dirname, 'expected', file);
+  return new Vinyl({
+    path: filePath,
     cwd: __dirname,
     base: path.resolve(__dirname, 'expected', path.dirname(file)),
-    contents: fs.readFileSync(filepath)
+    contents: fs.readFileSync(filePath)
   });
 }
 
 function streamShouldContain(stream, files, done, errRegexp) {
-  var received = 0;
+  let received = 0;
 
   stream.on('error', function (err) {
     err.message.should.match(errRegexp);
     done();
   });
 
-  var contents = files.map(function (file) {
+  const contents = files.map(function (file) {
     return String(expectedFile(file).contents);
   });
   stream.on('data', function (newFile) {

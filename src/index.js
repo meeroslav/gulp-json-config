@@ -1,10 +1,11 @@
-var through = require('through2');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
-var File = gutil.File;
-var path = require('path');
+'use strict';
 
-var PLUGIN_NAME = 'json-config';
+const through = require('through2');
+const PluginError = require('plugin-error');
+const Vinyl = require('vinyl');
+const path = require('path');
+
+const PLUGIN_NAME = 'json-config';
 
 module.exports = function (opt) {
   opt = opt || {};
@@ -16,15 +17,15 @@ module.exports = function (opt) {
   opt.rules = opt.rules || null;
 
 
-  var firstFile = null;
-  var data = {};
-  var skipConversion = false;
+  let firstFile = null;
+  let data = {};
+  let skipConversion = false;
 
   /**
    * Get name based on environment
    * @param name
    * @param environment
-   * @returns {string|XML|void}
+   * @returns {string|void}
    */
   function composeNewName(name, environment) {
     return name.replace('.json', '.' + environment + '.json');
@@ -49,8 +50,8 @@ module.exports = function (opt) {
       return cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
     try {
-      var name = target.relative.substr(0, target.relative.length - 5); // get name
-      var content = JSON.parse(target.contents.toString());
+      const name = target.relative.substr(0, target.relative.length - 5); // get name
+      let content = JSON.parse(target.contents.toString());
       data[name] = opt.modify(content); // archive content
       cb();
     } catch (err) {
@@ -66,8 +67,8 @@ module.exports = function (opt) {
    */
   function endStream(cb) {
     if (firstFile && !skipConversion) {
-      var cwd = firstFile.cwd;
-      var base = firstFile.base;
+      const cwd = firstFile.cwd;
+      const base = firstFile.base;
 
       if (opt.rules) {
         Object.keys(opt.rules).forEach(function (environmentOrder) {
@@ -90,7 +91,7 @@ module.exports = function (opt) {
    * @param environmentOrder
    */
   function pushFile(stream, cwd, base, environmentOrder) {
-    var newFile = new File({
+    const newFile = new Vinyl({
       cwd: cwd,
       base: base,
       path: path.join(base, environmentOrder ? composeNewName(opt.fileName, environmentOrder) : opt.fileName),
@@ -105,7 +106,7 @@ module.exports = function (opt) {
    * @param environmentOrder
    */
   function combineJSONData(data, environmentOrder) {
-    var result = {};
+    let result = {};
 
     // iterate through all configFiles
     Object.keys(data).forEach(function (configName) {
