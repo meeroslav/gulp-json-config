@@ -12,8 +12,8 @@ module.exports = function (opt) {
 
   opt.fileName = opt.fileName || 'config.json';
   opt.modify = opt.modify || function (json) {
-      return json;
-    };
+    return json;
+  };
   opt.rules = opt.rules || null;
 
 
@@ -145,7 +145,7 @@ module.exports = function (opt) {
     /**
      * Run plugin
      */
-    return new Buffer(JSON.stringify(result));
+    return new Buffer.from(JSON.stringify(result));
   }
 
   return through.obj(handleStream, endStream);
